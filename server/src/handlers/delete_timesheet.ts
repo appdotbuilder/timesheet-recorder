@@ -1,8 +1,19 @@
+import { db } from '../db';
+import { timesheetsTable } from '../db/schema';
 import { type DeleteTimesheetInput } from '../schema';
+import { eq } from 'drizzle-orm';
 
 export const deleteTimesheet = async (input: DeleteTimesheetInput): Promise<boolean> => {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is deleting a timesheet entry from the database by ID.
-    // Return true if the deletion was successful, false if no timesheet with the given ID was found.
-    return Promise.resolve(false);
+  try {
+    // Delete the timesheet entry
+    const result = await db.delete(timesheetsTable)
+      .where(eq(timesheetsTable.id, input.id))
+      .execute();
+
+    // Check if any row was deleted
+    return (result.rowCount ?? 0) > 0;
+  } catch (error) {
+    console.error('Timesheet deletion failed:', error);
+    throw error;
+  }
 };
